@@ -11,7 +11,6 @@ import importlib
 import inspect
 import os
 import pkgutil
-import random
 import re
 import string
 import sys
@@ -49,6 +48,7 @@ from .utilities import (
     string_to_timestamp,
     validate_name,
 )
+import secrets
 
 CUSTOM_SETTINGS = [
     "apigateway_policy",
@@ -1754,7 +1754,7 @@ class ZappaCLI:
             "\nYour Zappa deployments will need to be uploaded to a " + click.style("private S3 bucket", bold=True) + "."
         )
         click.echo("If you don't have a bucket yet, we'll create one for you too.")
-        default_bucket = "zappa-" + "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(9))
+        default_bucket = "zappa-" + "".join(secrets.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(9))
         while True:
             bucket = input("What do you want to call your bucket? (default '%s'): " % default_bucket) or default_bucket
 
@@ -2230,7 +2230,7 @@ class ZappaCLI:
         # Load stage-specific settings
         self.s3_bucket_name = self.stage_config.get(
             "s3_bucket",
-            "zappa-" + "".join(random.choice(string.ascii_lowercase + string.digits) for _ in range(9)),
+            "zappa-" + "".join(secrets.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(9)),
         )
         self.vpc_config = self.stage_config.get("vpc_config", {})
         self.memory_size = self.stage_config.get("memory_size", 512)
