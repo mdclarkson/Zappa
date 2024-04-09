@@ -3273,9 +3273,6 @@ class Zappa:
         """
         Spawn a PDB shell.
         """
-        import pdb
-
-        pdb.set_trace()
 
     def load_credentials(self, boto_session=None, profile_name=None):
         """
