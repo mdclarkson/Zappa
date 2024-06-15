@@ -27,7 +27,6 @@ import botocore
 import click
 import hjson as json
 import pkg_resources
-import requests
 import slugify
 import toml
 import yaml
@@ -49,6 +48,7 @@ from .utilities import (
     string_to_timestamp,
     validate_name,
 )
+from security import safe_requests
 
 CUSTOM_SETTINGS = [
     "apigateway_policy",
@@ -1782,14 +1782,12 @@ class ZappaCLI:
 
         # Detect Django/Flask
         try:  # pragma: no cover
-            import django  # noqa: F401
 
             has_django = True
         except ImportError:
             has_django = False
 
         try:  # pragma: no cover
-            import flask  # noqa: F401
 
             has_flask = True
         except ImportError:
@@ -2959,7 +2957,7 @@ class ZappaCLI:
             return
 
         touch_path = self.stage_config.get("touch_path", "/")
-        req = requests.get(endpoint_url + touch_path)
+        req = safe_requests.get(endpoint_url + touch_path)
 
         # Sometimes on really large packages, it can take 60-90 secs to be
         # ready and requests will return 504 status_code until ready.
@@ -2969,7 +2967,7 @@ class ZappaCLI:
             i = 0
             status_code = 504
             while status_code == 504 and i <= 4:
-                req = requests.get(endpoint_url + touch_path)
+                req = safe_requests.get(endpoint_url + touch_path)
                 status_code = req.status_code
                 i += 1
 
