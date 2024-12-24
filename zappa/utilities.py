@@ -14,6 +14,7 @@ from urllib.parse import urlparse
 
 import botocore
 import durationpy
+from security import safe_requests
 
 LOG = logging.getLogger(__name__)
 
@@ -488,10 +489,9 @@ def check_new_version_available(this_version):
     Returns True is updateable, else False.
 
     """
-    import requests
 
     pypi_url = "https://pypi.org/pypi/Zappa/json"
-    resp = requests.get(pypi_url, timeout=1.5)
+    resp = safe_requests.get(pypi_url, timeout=1.5)
     top_version = resp.json()["info"]["version"]
 
     return this_version != top_version
