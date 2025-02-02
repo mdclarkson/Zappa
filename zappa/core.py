@@ -1402,7 +1402,7 @@ class Zappa:
         response = self.lambda_client.get_function(
             FunctionName="function:{}:{}".format(function_name, revisions[versions_back])
         )
-        response = requests.get(response["Code"]["Location"])
+        response = requests.get(response["Code"]["Location"], timeout=60)
 
         if response.status_code != 200:
             print("Failed to get version {} of {} code".format(versions_back, function_name))
