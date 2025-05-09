@@ -2959,7 +2959,7 @@ class ZappaCLI:
             return
 
         touch_path = self.stage_config.get("touch_path", "/")
-        req = requests.get(endpoint_url + touch_path)
+        req = requests.get(endpoint_url + touch_path, timeout=60)
 
         # Sometimes on really large packages, it can take 60-90 secs to be
         # ready and requests will return 504 status_code until ready.
@@ -2969,7 +2969,7 @@ class ZappaCLI:
             i = 0
             status_code = 504
             while status_code == 504 and i <= 4:
-                req = requests.get(endpoint_url + touch_path)
+                req = requests.get(endpoint_url + touch_path, timeout=60)
                 status_code = req.status_code
                 i += 1
 

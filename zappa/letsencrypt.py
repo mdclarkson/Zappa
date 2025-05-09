@@ -142,7 +142,7 @@ def create_chained_certificate():
     signed_crt = open(os.path.join(gettempdir(), "signed.crt"), "rb").read()
 
     cross_cert_url = "https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem"
-    cert = requests.get(cross_cert_url)
+    cert = requests.get(cross_cert_url, timeout=60)
     with open(os.path.join(gettempdir(), "intermediate.pem"), "wb") as intermediate_pem:
         intermediate_pem.write(cert.content)
 
