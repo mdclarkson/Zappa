@@ -28,7 +28,6 @@ from typing import Optional
 
 import boto3
 import botocore
-import requests
 import troposphere
 import troposphere.apigateway
 from botocore.exceptions import ClientError
@@ -45,6 +44,7 @@ from .utilities import (
     human_size,
     remove_event_source,
 )
+from security import safe_requests
 
 ##
 # Logging Config
@@ -890,7 +890,7 @@ class Zappa:
         Downloads a given url in chunks and writes to the provided stream (can be any io stream).
         Displays the progress bar for the download.
         """
-        resp = requests.get(url, timeout=float(os.environ.get("PIP_TIMEOUT", 2)), stream=True)
+        resp = safe_requests.get(url, timeout=float(os.environ.get("PIP_TIMEOUT", 2)), stream=True)
         resp.raw.decode_content = True
 
         progress = tqdm(
@@ -969,7 +969,7 @@ class Zappa:
         else:
             url = "https://pypi.python.org/pypi/{}/json".format(package_name)
             try:
-                res = requests.get(url, timeout=float(os.environ.get("PIP_TIMEOUT", 1.5)))
+                res = safe_requests.get(url, timeout=float(os.environ.get("PIP_TIMEOUT", 1.5)))
                 data = res.json()
             except Exception:  # pragma: no cover
                 return None, None
@@ -1402,7 +1402,7 @@ class Zappa:
         response = self.lambda_client.get_function(
             FunctionName="function:{}:{}".format(function_name, revisions[versions_back])
         )
-        response = requests.get(response["Code"]["Location"])
+        response = safe_requests.get(response["Code"]["Location"])
 
         if response.status_code != 200:
             print("Failed to get version {} of {} code".format(versions_back, function_name))
